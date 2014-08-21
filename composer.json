@@ -1,0 +1,19 @@
+{
+    "name": "omashu/front",
+    "description": "Helpers for setting title, description, keywords and custom meta tags",
+    "authors": [
+        {
+            "name": "Gerasimov Ilya",
+            "email": "oma9512@ya.ru"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Omashu\\Front": "src/"
+        },
+        "classmap": ["src/"]
+    }
+}
