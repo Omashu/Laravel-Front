@@ -7,36 +7,73 @@ use Illuminate\Support\Facades\HTML;
  */
 class Front {
 
+	/**
+	 * @var array page title
+	 */
 	protected $title = [];
+
+	/**
+	 * @var array page description
+	 */
 	protected $description = [];
+
+	/**
+	 * @var array page keywords
+	 */
 	protected $keywords = [];
+
+	/**
+	 * @var array page custom meta tags
+	 */
 	protected $custom = [];
 
+	/**
+	 * Add custom tag
+	 * 
+	 * @param string $tag tag name, meta | link
+	 * @param array $args arguments ["rel" => "canonical"]
+	 * @return this
+	 */
 	public function custom($tag, array $args = [])
 	{
 		$this->custom[] = [$tag, $args];
 		return $this;
 	}
 
+	/**
+	 * Get page title
+	 * 
+	 * @return string
+	 */
 	public function getTitle()
 	{
-		$separator = " / ";
-		return HTML::entities(implode($separator, $this->title));
+		return HTML::entities(implode(" / ", $this->title));
 	}
 
+	/**
+	 * Get page description
+	 * 
+	 * @return string
+	 */
 	public function getDescription()
 	{
 		$description = implode('. ', $this->description).". ";
 		$description = mb_substr($description, 0, 250);
 		$description = preg_replace("/\s+/s", " ", $description);
+		$description = trim($description, ". ");
 		$description = trim($description);
 
 		return HTML::entities($description);
 	}
 
+	/**
+	 * Get page keywords
+	 * 
+	 * @return string
+	 */
 	public function getKeywords()
 	{
-		$temp_data = implode(', ', $keywords);
+		$temp_data = implode(', ', $this->keywords);
 
 		$clean_data = mb_convert_encoding($temp_data, "UTF-8");
 		$clean_data = mb_strtolower($clean_data);
@@ -44,9 +81,16 @@ class Front {
 		$clean_data = preg_replace("/(\s+)/", " ", $clean_data);
 
 		$array_keywords = explode(",", $clean_data);
-		array_walk($array_keywords, function(&$value) {
-			$value = trim($value);
-		});
+		foreach ($array_keywords as $key => $value)
+		{
+			if (empty($value))
+			{
+				unset($array_keywords[$key]);
+				continue;
+			}
+
+			$array_keywords[$key] = trim($array_keywords[$key]);
+		}
 
 		$frequent_keywords = array();
 		foreach ($array_keywords as $keyword) {
@@ -63,11 +107,26 @@ class Front {
 		return implode(", ", $frequent_keywords);
 	}
 
+	/**
+	 * Get custom meta tags
+	 * 
+	 * @return array
+	 */
+	public function getCustom()
+	{
+		return $this->custom;
+	}
+
+	/**
+	 * Generate and return meta tags
+	 * 
+	 * @return string
+	 */
 	public function getHtml()
 	{
-		$this->custom("meta", ["name" => "description", "content" => $this->getDescription()]);
-		$this->custom("meta", ["name" => "keywords", "content" => $this->getKeywords()]);
 		$html = "<title>".$this->getTitle()."</title>";
+		$html .= "<meta".HTML::attributes(["name" => "description", "content" => $this->getDescription()])."/>";
+		$html .= "<meta".HTML::attributes(["name" => "keywords", "content" => $this->getKeywords()])."/>";
 
 		foreach ($this->custom as $custom)
 		{
