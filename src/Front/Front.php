@@ -57,7 +57,8 @@ class Front {
 	 */
 	public function getDescription()
 	{
-		$description = implode('. ', $this->description).". ";
+		$description = array_reverse($this->description);
+		$description = implode('. ', $description).". ";
 		$description = mb_substr($description, 0, 250);
 		$description = preg_replace("/\s+/s", " ", $description);
 		$description = trim($description, ". ");
@@ -104,7 +105,7 @@ class Front {
 
 		arsort($frequent_keywords);
 
-		return implode(", ", $frequent_keywords);
+		return HTML::entities(implode(", ", array_keys($frequent_keywords)));
 	}
 
 	/**
