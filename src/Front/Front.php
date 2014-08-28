@@ -47,7 +47,7 @@ class Front {
 	 */
 	public function getTitle()
 	{
-		return HTML::entities(implode(" / ", $this->title));
+		return HTML::entities(implode(" / ", array_reverse($this->title)));
 	}
 
 	/**
