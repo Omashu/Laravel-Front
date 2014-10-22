@@ -32,11 +32,12 @@ class Front {
 	 * 
 	 * @param string $tag tag name, meta | link
 	 * @param array $args arguments ["rel" => "canonical"]
+	 * @param array $params ["before"=>string, "after"=>string]
 	 * @return this
 	 */
-	public function custom($tag, array $args = [])
+	public function custom($tag, array $args = [], array $params = [])
 	{
-		$this->custom[] = [$tag, $args];
+		$this->custom[] = [$tag, $args, $params];
 		return $this;
 	}
 
@@ -131,7 +132,10 @@ class Front {
 
 		foreach ($this->custom as $custom)
 		{
-			$html .= "<$custom[0]".HTML::attributes($custom[1])."/>";
+			$html .= array_get($custom[2], "before")
+				. "<$custom[0]".HTML::attributes($custom[1])."/>"
+				. (array_get($custom[2], "close") ? "</$custom[0]>" : "")
+				. array_get($custom[2], "after");
 		}
 
 		return $html;
