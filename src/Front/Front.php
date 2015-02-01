@@ -28,6 +28,29 @@ class Front {
 	protected $custom = [];
 
 	/**
+	 * @var array js vars
+	 */
+	protected $js = [];
+
+	/**
+	 * @var string js var name
+	 */
+	protected $jsVarName = "_VALUES";
+
+	/**
+	 * Add js var
+	 * @param string $name
+	 * @param mixed $value
+	 * 
+	 * @return this
+	 */
+	public function js($name, $value = null)
+	{
+		$this->js[$name] = $value;
+		return $this;
+	}
+
+	/**
 	 * Add custom tag
 	 * 
 	 * @param string $tag tag name, meta | link
@@ -60,6 +83,8 @@ class Front {
 	{
 		$description = array_reverse($this->description);
 		$description = implode('. ', $description).". ";
+		$description = strip_tags($description);
+		$description = preg_replace("/\s+/s", " ", $description);
 		$description = mb_substr($description, 0, 250);
 		$description = preg_replace("/\s+/s", " ", $description);
 		$description = trim($description, ". ");
@@ -120,20 +145,30 @@ class Front {
 	}
 
 	/**
+	 * Get js vars
+	 * @return array
+	 */
+	public function getJs()
+	{
+		return $this->js;
+	}
+
+	/**
 	 * Generate and return meta tags
 	 * 
 	 * @return string
 	 */
 	public function getHtml()
 	{
-		$html = "<title>".$this->getTitle()."</title>";
-		$html .= "<meta".HTML::attributes(["name" => "description", "content" => $this->getDescription()])."/>";
-		$html .= "<meta".HTML::attributes(["name" => "keywords", "content" => $this->getKeywords()])."/>";
+		$html = '<script type="text/javascript">var '.$this->jsVarName.' = '.json_encode($this->js).'</script>';
+		$html .= "\n<title>".$this->getTitle()."</title>";
+		$html .= "\n<meta".HTML::attributes(["name" => "description", "content" => $this->getDescription()])."/>";
+		$html .= "\n<meta".HTML::attributes(["name" => "keywords", "content" => $this->getKeywords()])."/>";
 
 		foreach ($this->custom as $custom)
 		{
 			$html .= array_get($custom[2], "before")
-				. "<$custom[0]".HTML::attributes($custom[1])."/>"
+				. "\n<$custom[0]".HTML::attributes($custom[1])."/>"
 				. (array_get($custom[2], "close") ? "</$custom[0]>" : "")
 				. array_get($custom[2], "after");
 		}
@@ -145,14 +180,14 @@ class Front {
 	{
 		if (!in_array($method, ["title", "description", "keywords"]))
 		{
-			return false;
+			return $this;
 		}
 
 		foreach ($values as $value)
 		{
 			if (is_array($value))
 			{
-				$this->{$method}($value);
+				$this->__call($method, $value);
 				continue;
 			}
 
