@@ -14,7 +14,7 @@ Use composer:
 		}
 	],
 	"require": {
-		"omashu/front": "1.0"
+		"omashu/front": "1.*"
 	},
 
 Configure your app.php
@@ -35,7 +35,11 @@ Use module:
 	Front::keywords("site");
 
 	// adding custom tag
-	Front::custom("meta", ["name" => "generator", "value" => "Script v1.0"]);
+	Front::custom("meta", ["name" => "generator", "value" => "Value"]);
+
+	// adding js variables
+	Front::js("_token", Session::token());
+	Front::js("baseUrl", "http://localhost:8000");
 
 	// show data in your head block
 	echo Front::getHtml();
