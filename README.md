@@ -34,6 +34,10 @@ Use module:
 	Front::description("This is my site");
 	Front::keywords("site");
 
+	Front::scripts(Config::get("frontend.scripts", []));
+	Front::styles(Config::get("frontend.styles", []));
+	Front::favicon(asset("favicon.ico"));
+
 	// adding custom tag
 	Front::custom("meta", ["name" => "generator", "value" => "Value"]);
 
