@@ -65,6 +65,83 @@ class Front {
 	}
 
 	/**
+	 * Add script src
+	 * 
+	 * @param array|string $value ["script.js", ["before"=>"","after"=>""]] or "script.js"
+	 * @return this
+	 */
+	public function script($value)
+	{
+		$params = [];
+		if (is_array($value)) {
+			$params = $value[1];
+			$src = $value[0];
+		} else
+			$src = $value;
+
+		$params["close"] = true;
+		$this->custom("script", ["type" => "text/javascript", "src" => $src], $params);
+		return $this;
+	}
+
+	/**
+	 * Add scripts from array
+	 * @param array $values ["script.js", ["script1.js", ["before"=>"","after"=>""]]] etc.
+	 * @return this
+	 */
+	public function scripts(array $values)
+	{
+		foreach ($values as $value)
+			$this->script($value);
+
+		return $this;
+	}
+
+	/**
+	 * Add style href
+	 * 
+	 * @param array|string $value ["style.css", ["before"=>"","after"=>""]] or "style.css"
+	 * @return this
+	 */
+	public function style($value)
+	{
+		$params = [];
+		if (is_array($value)) {
+			$params = $value[1];
+			$href = $value[0];
+		} else
+			$href = $value;
+
+		$params["close"] = false;
+		$this->custom("link", ["rel" => "stylesheet", "href" => $href], $params);
+		return $this;
+	}
+
+	/**
+	 * Add styles from array
+	 * @param array $values ["style.css", ["style1.css", ["before"=>"","after"=>""]]] etc.
+	 * @return this
+	 */
+	public function styles(array $values)
+	{
+		foreach ($values as $value)
+			$this->style($value);
+
+		return $this;
+	}
+
+	/**
+	 * Add favicon tags
+	 * @param string $assetUrl /favicon.icon
+	 * @return this
+	 */
+	public function favicon($assetUrl, array $params = [])
+	{
+		$this->custom("link", ["rel" => "shortcut icon", "type" => "image/x-icon", "href" => $assetUrl], $params);
+		return $this;
+	}
+
+	/**
 	 * Get page title
 	 * 
 	 * @return string
@@ -179,9 +256,7 @@ class Front {
 	public function __call($method, $values)
 	{
 		if (!in_array($method, ["title", "description", "keywords"]))
-		{
 			return $this;
-		}
 
 		foreach ($values as $value)
 		{
