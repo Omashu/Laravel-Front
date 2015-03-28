@@ -1,6 +1,6 @@
 <?php namespace Omashu\Front;
 
-use Illuminate\Support\Facades\HTML;
+use HTML;
 
 /**
  * Front
