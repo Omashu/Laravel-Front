@@ -22,9 +22,11 @@ Configure your app.php
 	
 	providers:
 		'Omashu\Front\FrontServiceProvider',
+		'Illuminate\Html\HtmlServiceProvider',
 
 	aliases:
 		'Front' => 'Omashu\Front\Facades\FrontFacade',
+		'HTML'      => 'Illuminate\Html\HtmlFacade',
 
 Use module:
 ----------
